@@ -105,10 +105,6 @@ export default function CredentialsPage() {
           </h2>
           <Dialog>
             <DialogTrigger asChild>
-              {/* <Button variant="outline">
-                <FileKey className="mr-2 h-4 w-4" />
-                Add Credentials
-              </Button> */}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[625px]">
               <DialogHeader>
