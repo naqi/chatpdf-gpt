@@ -5,16 +5,16 @@ import cookies from "js-cookie"
 
 const credentials_cookie_key = "credentials"
 const initialCredentials = {
-  openaiApiKey: process.env.OPENAI_API_KEY,
-  pineconeEnvironment: process.env.PINECONE_ENVIRONMENT,
+  openaiApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  pineconeEnvironment: process.env.NEXT_PUBLIC_PINECONE_ENVIRONMENT,
   pineconeBucket: process.env.PINECONE_BUCKET_NAME,
-  pineconeIndex: process.env.PINECONE_INDEX_NAME,
-  pineconeApiKey: process.env.PINECONE_API_KEY,
-  supabaseUrl: process.env.SUPABASE_URL,
-  supabaseKey: process.env.SUPABASE_KEY,
-  supabaseBucket: process.env.SUPABASE_BUCKET,
-  supabaseDatabaseUrl: process.env.DATABASE_URL,
-  supabaseDirectUrl: process.env.DIRECT_URL,
+  pineconeIndex: process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
+  pineconeApiKey: process.env.NEXT_PUBLIC_PINECONE_API_KEY,
+  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
+  supabaseBucket: process.env.NEXT_PUBLIC_SUPABASE_BUCKET,
+  supabaseDatabaseUrl: process.env.NEXT_PUBLIC_DATABASE_URL,
+  supabaseDirectUrl: process.env.NEXT_PUBLIC_DIRECT_URL,
 }
 
 const CredentialsCookieContext = createContext({

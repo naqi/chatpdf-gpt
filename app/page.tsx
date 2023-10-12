@@ -240,7 +240,7 @@ const Page = () => {
         } catch (error) {
           setLoading(false);
           setError('An error occurred while fetching the data. Please try again.');
-          console.log('error', error);
+          console.log('\n\nCHAT_API_ERROR_FRONTEND\n\n', error, `\n\n`);
         }
       }
     }
