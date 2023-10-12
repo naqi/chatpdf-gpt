@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   const { childId, childContext } = body
 
   const credentials = {
-    supabaseDatabaseUrl: process.env.DATABASE_URL,
+    supabaseDatabaseUrl: process.env.NEXT_PUBLIC_DATABASE_URL,
   }
 
   const childInitialContextMessage = [
