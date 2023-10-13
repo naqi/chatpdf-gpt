@@ -88,6 +88,7 @@ export async function POST(request: NextRequest) {
         },
         data: {
           messages: messageHistory,
+          updated_at: new Date()
         },
       })
     })
