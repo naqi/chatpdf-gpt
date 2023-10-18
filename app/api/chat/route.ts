@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       //Push response to message history array
       messageHistory.push({
         name: "ai",
-        text: res.text,
+        text: res.response,
       })
 
       //Update message history array in table against chatId
