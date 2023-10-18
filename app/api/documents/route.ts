@@ -10,6 +10,7 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import { PineconeStore } from "langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
+import {PINECONE_NAME_SPACE} from "@/config/pinecone";
 
 export async function POST(request: Request) {
   const body = await request.json()
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
 
   const docs = await textSplitter.splitDocuments(rawDocs)
 
-  console.log("creating vector store...")
+  console.log(`creating vector store for ${body.name}...`)
   /*create and store the embeddings in the vectorStore*/
   const embeddings = new OpenAIEmbeddings({
     openAIApiKey: openaiApiKey,
