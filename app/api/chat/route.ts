@@ -6,7 +6,7 @@ import { ModelHandler } from "@/lib/langchain/model"
 import { getPineconeStore } from "@/lib/langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
 
-// export const runtime = "edge"
+export const runtime = "edge"
 
 export async function POST(request: NextRequest) {
   console.log('\n\n INCOMING_REQUEST',request, '\n\n')
