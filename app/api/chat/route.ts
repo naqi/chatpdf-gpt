@@ -75,6 +75,8 @@ export async function POST(request: NextRequest) {
 
     //Resolve the promise returned by langchain
     Promise.resolve(response).then(async (res) => {
+
+      console.log('Promise Resolved')
       //Push response to message history array
       messageHistory.push({
         name: "ai",
