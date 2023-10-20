@@ -8,8 +8,12 @@ import { createPrisma } from "@/lib/prisma"
 
 // export const runtime = "edge"
 
+export const runtime = "nodejs"
+// This is required to enable streaming
+export const dynamic = "force-dynamic"
+
 export async function POST(request: NextRequest) {
-  console.log('\n\n INCOMING_REQUEST',request, '\n\n')
+  console.log("\n\n INCOMING_REQUEST", request, "\n\n")
   const body = await request.json()
   // Get credentials from ENV
   const credentials = {
@@ -75,8 +79,7 @@ export async function POST(request: NextRequest) {
 
     //Resolve the promise returned by langchain
     Promise.resolve(response).then(async (res) => {
-
-      console.log('Promise Resolved')
+      console.log("Promise Resolved")
       //Push response to message history array
       messageHistory.push({
         name: "ai",
@@ -90,7 +93,7 @@ export async function POST(request: NextRequest) {
         },
         data: {
           messages: messageHistory,
-          updated_at: new Date()
+          updated_at: new Date(),
         },
       })
     })
@@ -98,10 +101,12 @@ export async function POST(request: NextRequest) {
     return new NextResponse(stream.readable, {
       headers: {
         "Content-Type": "text/event-stream",
+        Connection: "keep-alive",
+        "Cache-Control": "no-cache, no-transform",
       },
     })
   } catch (error: any) {
-    console.log('\n\nCHAT_API_ERROR_BACKEND\n\n', error, `\n\n`);
+    console.log("\n\nCHAT_API_ERROR_BACKEND\n\n", error, `\n\n`)
     return NextResponse.json(
       { error: error.message || "Something went wrong" },
       { status: 500 }
