@@ -14,7 +14,7 @@ import { getPineconeStore } from "@/lib/langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
 
 export const runtime = "nodejs"
-export const maxDuration = 60;
+export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   console.log("\n\n INCOMING_REQUEST", request, "\n\n")
