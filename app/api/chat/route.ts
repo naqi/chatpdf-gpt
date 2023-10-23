@@ -6,12 +6,6 @@ import { ModelHandler } from "@/lib/langchain/model"
 import { getPineconeStore } from "@/lib/langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
 
-// export const runtime = "edge"
-// export const maxDuration = 30;
-export const runtime = "nodejs"
-// This is required to enable streaming
-export const dynamic = "force-dynamic"
-
 export async function POST(request: NextRequest) {
   console.log("\n\n INCOMING_REQUEST", request, "\n\n")
   const body = await request.json()
@@ -85,7 +79,7 @@ export async function POST(request: NextRequest) {
         name: "ai",
         text: res.response,
       })
-
+      console.log('Before Prisman Query')
       //Update message history array in table against chatId
       await prisma.chatHistory.update({
         where: {
@@ -96,13 +90,13 @@ export async function POST(request: NextRequest) {
           updated_at: new Date(),
         },
       })
+      console.log('After Prisma Query')
+
     })
 
     return new NextResponse(stream.readable, {
       headers: {
-        "Content-Type": "text/event-stream",
-        Connection: "keep-alive",
-        "Cache-Control": "no-cache, no-transform",
+        "Content-Type": "text/event-stream"
       },
     })
   } catch (error: any) {
