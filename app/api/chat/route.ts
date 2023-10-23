@@ -7,7 +7,7 @@ import { getPineconeStore } from "@/lib/langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
 
 // export const runtime = "edge"
-
+export const maxDuration = 60;
 export const runtime = "nodejs"
 // This is required to enable streaming
 export const dynamic = "force-dynamic"
