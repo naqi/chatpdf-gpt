@@ -72,16 +72,16 @@ export async function POST(request: NextRequest) {
     })
 
     //Resolve the promise returned by langchain
-    Promise.resolve(response).then(async (res) => {
+    Promise.resolve(response).then((res) => {
       console.log("Promise Resolved")
       //Push response to message history array
       messageHistory.push({
         name: "ai",
         text: res.response,
       })
-      console.log('Before Prisman Query')
+      console.log("Before Prisman Query")
       //Update message history array in table against chatId
-      await prisma.chatHistory.update({
+      const updateResponse = prisma.chatHistory.update({
         where: {
           id: chatId,
         },
@@ -90,13 +90,19 @@ export async function POST(request: NextRequest) {
           updated_at: new Date(),
         },
       })
-      console.log('After Prisma Query')
-
+      Promise.resolve(updateResponse)
+        .then((res) => {
+          console.log(res, "Update Response")
+        })
+        .catch((err) => {
+          console.log(err, "Error in Update")
+        })
+      console.log("After Prisma Query")
     })
 
     return new NextResponse(stream.readable, {
       headers: {
-        "Content-Type": "text/event-stream"
+        "Content-Type": "text/event-stream",
       },
     })
   } catch (error: any) {
