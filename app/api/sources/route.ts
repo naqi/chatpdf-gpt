@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     !credentials.pineconeEnvironment ||
     !credentials.pineconeApiKey
   ) {
-    return NextResponse.redirect("/credentials")
+    return NextResponse.json({ messagee: "Unauthorized" })
   }
 
   const { openaiApiKey, pineconeEnvironment, pineconeIndex, pineconeApiKey } =
