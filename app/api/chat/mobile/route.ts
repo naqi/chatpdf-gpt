@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     !credentials.pineconeEnvironment ||
     !credentials.pineconeApiKey
   ) {
-    return NextResponse.redirect("/credentials")
+    return NextResponse.json({ messagee: "Unauthorized" })
   }
 
   const { prompt, chatId } = body

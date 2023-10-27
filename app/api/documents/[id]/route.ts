@@ -6,15 +6,14 @@ import { PrismaClient } from "@prisma/client"
 
 import { createPrisma } from "@/lib/prisma"
 import { supabaseClient } from "@/lib/supabase"
+import { configurationValues, validateCognitoToken } from "@/utils/auth"
 
 // @ts-ignore
 export async function GET(request: NextRequest, { params: { id } }) {
   // Get credentials from cookies
-  const credentials = JSON.parse(
-    request.cookies.get("credentials")?.value || null
-  )
+  const credentials = configurationValues
   if (!credentials) {
-    return NextResponse.redirect("/credentials")
+    return NextResponse.json({ messagee: "Unauthorized" })
   }
   // refactor this
   const { supabaseDatabaseUrl } = credentials
@@ -37,12 +36,18 @@ export async function GET(request: NextRequest, { params: { id } }) {
 // delete document and pinecone namespace for document. namespace is the same as the document id
 // @ts-ignore
 export async function DELETE(request: NextRequest, { params: { id } }) {
-  // Get credentials from cookies
-  const credentials = JSON.parse(
-    request.cookies.get("credentials")?.value || null
-  )
+
+  const authHeader = JSON.parse(request.cookies.get("auth")?.value || null)
+  if (!authHeader) {
+    return NextResponse.json({ data: [] })
+  } else {
+    const isAuthorized = validateCognitoToken(authHeader.AccessToken)
+    try {
+      if (isAuthorized) {
+       // Get credentials from cookies
+  const credentials = configurationValues
   if (!credentials) {
-    return NextResponse.redirect("/credentials")
+    return NextResponse.json({ messagee: "Unauthorized" })
   }
 
   const {
@@ -80,4 +85,12 @@ export async function DELETE(request: NextRequest, { params: { id } }) {
     )
   }
   return NextResponse.json({ message: "Document deleted" })
+      } else {
+        return NextResponse.json({ messagee: "Unauthorized" })
+      }
+    } catch (error) {
+      return NextResponse.json({ messagee: "Something went wrong" })
+    }
+  }
+  
 }
