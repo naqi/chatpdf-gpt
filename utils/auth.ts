@@ -5,11 +5,9 @@ var pem = jwkToPem(jwk)
 
 export const validateCognitoToken = (accessToken) =>{
     try {
-        console.log('Token', accessToken)
         var decodedToken = jwt.verify(accessToken, pem, {
           algorithms: ["RS256"],
         })
-        console.log({decodedToken})
         if (decodedToken && decodedToken["cognito:groups"][0] === "admin") {
             return true
         }else{
