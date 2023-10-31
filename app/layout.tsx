@@ -1,7 +1,6 @@
 import "@/styles/globals.css"
 import { Metadata } from "next"
 import { AuthCookieProvider } from "@/context/auth-context"
-import { CredentialsCookieProvider } from "@/context/credentials-context"
 import { Analytics } from "@vercel/analytics/react"
 
 import { siteConfig } from "@/config/site"
@@ -45,7 +44,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           )}
         >
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            <CredentialsCookieProvider>
               <AuthCookieProvider>
                 <div className="relative flex min-h-screen flex-col">
                   <SiteHeader />
@@ -54,7 +52,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <TailwindIndicator />
                 <Toaster />
               </AuthCookieProvider>
-            </CredentialsCookieProvider>
           </ThemeProvider>
           <Analytics />
         </body>
