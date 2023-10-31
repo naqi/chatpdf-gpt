@@ -102,7 +102,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ data: [] })
   } else {
     try {
-      console.log(authHeader)
       const isAuthorized = validateCognitoToken(authHeader.AccessToken)
 
       if (isAuthorized) {
