@@ -22,16 +22,16 @@ import styles from "@/styles/Home.module.css"
 import "katex/dist/katex.min.css"
 // @ts-ignore
 import Image from "next/image"
+import { configurationValues } from "@/utils/auth"
 import { Document } from "langchain/document"
 import ReactMarkdown from "react-markdown"
 import ScrollToBottom from "react-scroll-to-bottom"
 
 import { Message, reducer } from "@/lib/chat"
 import Spinner from "@/components/ui/Spinner"
-import { configurationValues } from "@/utils/auth"
 
 const Page = () => {
-  const  cookieValue  = configurationValues
+  const cookieValue = configurationValues
   const [state, dispatch] = useReducer(reducer, {
     messages: [
       {
@@ -147,11 +147,10 @@ const Page = () => {
     }
   }
 
-
   return (
     <section className="container grid grid-cols-2 items-center gap-6 pb-8 pt-6 md:py-10">
       <h3 className="text-2xl font-bold leading-tight text-gray-900">
-        Let's Chat
+        Let&apos;s Chat
       </h3>
       <div className="max-w max-h col-span-2  flex flex-col justify-center rounded md:col-span-2">
         <div className="transition-width font-default relative mx-auto flex h-full w-full max-w-3xl flex-1 flex-col items-stretch overflow-hidden pb-12">
@@ -167,7 +166,7 @@ const Page = () => {
                       {/* @ts-ignore */}
                       {state.messages &&
                         state.messages
-                          .filter((message) => message['name'] != "system")
+                          .filter((message) => message["name"] != "system")
                           .map((message, index) => {
                             let icon
                             let className
