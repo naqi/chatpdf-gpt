@@ -39,7 +39,6 @@ import { Button } from '@/components/ui/button';
 import { highlightPlugin } from '@react-pdf-viewer/highlight';
 import '@react-pdf-viewer/highlight/lib/styles/index.css';
 import { Message, reducer } from '@/lib/chat';
-import { useCredentialsCookie } from '@/context/credentials-context';
 import { configurationValues } from '@/utils/auth';
 
 const Page = ({ params }: {

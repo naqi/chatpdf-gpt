@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { useCredentialsCookie } from "@/context/credentials-context"
 import { AlertCircle, Check, Loader2, UploadCloud } from "lucide-react"
 import { useDropzone } from "react-dropzone"
 // import { useDropzone } from 'react-dropzone';
