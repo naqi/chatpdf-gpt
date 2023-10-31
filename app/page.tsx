@@ -22,7 +22,6 @@ import styles from "@/styles/Home.module.css"
 import "katex/dist/katex.min.css"
 // @ts-ignore
 import Image from "next/image"
-import { useCredentialsCookie } from "@/context/credentials-context"
 import { Document } from "langchain/document"
 import ReactMarkdown from "react-markdown"
 import ScrollToBottom from "react-scroll-to-bottom"
@@ -37,7 +36,6 @@ const Page = () => {
     messages: [
       {
         name: "system",
-        // text: 'Act as an expert. Use markdown, katex, remark-math and gfm syntax when applicable. wrap math expression using $$.',
         text: "Act as an expert. Reply to questions about this document. Self reflect on your answers.",
       },
     ],
@@ -169,7 +167,7 @@ const Page = () => {
                       {/* @ts-ignore */}
                       {state.messages &&
                         state.messages
-                          .filter((message) => message?.name != "system")
+                          .filter((message) => message['name'] != "system")
                           .map((message, index) => {
                             let icon
                             let className
