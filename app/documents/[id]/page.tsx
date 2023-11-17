@@ -39,12 +39,11 @@ import { Button } from '@/components/ui/button';
 import { highlightPlugin } from '@react-pdf-viewer/highlight';
 import '@react-pdf-viewer/highlight/lib/styles/index.css';
 import { Message, reducer } from '@/lib/chat';
-import { useCredentialsCookie } from '@/context/credentials-context';
+import { configurationValues } from '@/utils/auth';
 
 const Page = ({ params }: {
   params: { id: string }
 }) => {
-  const { cookieValue } = useCredentialsCookie()
 
   const searchPluginInstance = searchPlugin();
   const jumpToPagePluginInstance = jumpToPagePlugin();
@@ -71,6 +70,8 @@ const { highlight } = searchPluginInstance;
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const cookieValue = configurationValues
+
   const [messageState, setMessageState] = useState<{
     messages: Message[];
     pending?: string;

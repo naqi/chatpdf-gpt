@@ -7,7 +7,6 @@ if (!process.env.NEXT_PUBLIC_PINECONE_ENVIRONMENT || !process.env.NEXT_PUBLIC_PI
 export async function initPinecone(environment: string, apiKey: string) {
   try {
     const pinecone = new PineconeClient();
-    console.log(environment, apiKey);
     await pinecone.init({
       environment, //this is in the dashboard
       apiKey

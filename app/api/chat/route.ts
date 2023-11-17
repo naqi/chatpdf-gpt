@@ -27,25 +27,28 @@ export async function POST(request: NextRequest) {
     !credentials.pineconeEnvironment ||
     !credentials.pineconeApiKey
   ) {
-    return NextResponse.redirect("/credentials")
+    return NextResponse.json({ messagee: "Unauthorized" })
   }
 
-  const { prompt, chatId } = body
-
-  //Get history from supabase against child id
-  const prisma = createPrisma({ url: credentials.supabaseDatabaseUrl })
-  const historyFromDB = await prisma.chatHistory.findFirst({
-    where: {
-      id: chatId,
-    },
-  })
-
-  //Construct an array of message history to send it to model
+  const { prompt, chatId, messages: history } = body
   let messageHistory = []
-  const chatMessages = historyFromDB.messages as Prisma.JsonArray
-  chatMessages.map((message) => {
-    messageHistory.push(message)
-  })
+  const prisma = createPrisma({ url: credentials.supabaseDatabaseUrl })
+  if (chatId) {
+    //Get history from supabase against child id
+    const historyFromDB = await prisma.chatHistory.findFirst({
+      where: {
+        id: chatId,
+      },
+    })
+
+    //Construct an array of message history to send it to model
+    const chatMessages = historyFromDB.messages as Prisma.JsonArray
+    chatMessages.map((message) => {
+      messageHistory.push(message)
+    })
+  }else{
+    messageHistory = history
+  }
   // OpenAI recommends replacing newlines with spaces for best results
   const sanitizedQuestion = `${prompt.trim().replaceAll("\n", " ")}`
 
@@ -64,42 +67,43 @@ export async function POST(request: NextRequest) {
       sanitizedQuestion,
       messageHistory
     )
-
-    // Push current prompt to message history array
-    messageHistory.push({
-      name: "human",
-      text: prompt,
-    })
-
-    //Resolve the promise returned by langchain
-    Promise.resolve(response).then((res) => {
-      console.log("Promise Resolved")
-      //Push response to message history array
+    if (chatId) {
+      // Push current prompt to message history array
       messageHistory.push({
-        name: "ai",
-        text: res.response,
+        name: "human",
+        text: prompt,
       })
-      console.log("Before Prisman Query")
-      //Update message history array in table against chatId
-      const updateResponse = prisma.chatHistory.update({
-        where: {
-          id: chatId,
-        },
-        data: {
-          messages: messageHistory,
-          updated_at: new Date(),
-        },
-      })
-      Promise.resolve(updateResponse)
-        .then((res) => {
-          console.log(res, "Update Response")
-        })
-        .catch((err) => {
-          console.log(err, "Error in Update")
-        })
-      console.log("After Prisma Query")
-    })
 
+      //Resolve the promise returned by langchain
+      Promise.resolve(response).then((res) => {
+        console.log("Promise Resolved")
+        //Push response to message history array
+        messageHistory.push({
+          name: "ai",
+          text: res.response,
+        })
+        console.log("Before Prisman Query")
+        //Update message history array in table against chatId
+        const updateResponse = prisma.chatHistory.update({
+          where: {
+            id: chatId,
+          },
+          data: {
+            messages: messageHistory,
+            updated_at: new Date(),
+          },
+        })
+        Promise.resolve(updateResponse)
+          .then((res) => {
+            console.log(res, "Update Response")
+          })
+          .catch((err) => {
+            console.log(err, "Error in Update")
+          })
+        console.log("After Prisma Query")
+      })
+
+    }
     return new NextResponse(stream.readable, {
       headers: {
         "Content-Type": "text/event-stream",
