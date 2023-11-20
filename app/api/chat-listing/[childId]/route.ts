@@ -22,6 +22,9 @@ export async function GET(request: NextRequest, { params: { childId } }) {
   const data = await prisma.chatHistory.findMany({
     skip: skip,
     take: take,
+    orderBy: {
+      updated_at: 'desc'
+    },
     where: {
       childId,
     },
