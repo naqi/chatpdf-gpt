@@ -95,7 +95,7 @@ const Page = () => {
             method: "POST",
             signal: signal,
             body: JSON.stringify({
-              // ...cookieValue,
+              ...cookieValue,
               prompt,
               messages: state.messages,
             }),
