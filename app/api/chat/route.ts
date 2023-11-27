@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { getChatTitle } from "@/utils/chat"
 import { Prisma } from "@prisma/client"
 
 import { getChain } from "@/lib/langchain/chain"
@@ -30,7 +31,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ messagee: "Unauthorized" })
   }
 
-  const { prompt, chatId, messages: history } = body
+  const {
+    prompt,
+    chatId,
+    messages: history,
+    isNormalChat,
+    isFirstMessage,
+  } = body
   let messageHistory = []
   const prisma = createPrisma({ url: credentials.supabaseDatabaseUrl })
   if (chatId) {
@@ -46,7 +53,7 @@ export async function POST(request: NextRequest) {
     chatMessages.map((message) => {
       messageHistory.push(message)
     })
-  }else{
+  } else {
     messageHistory = history
   }
   // OpenAI recommends replacing newlines with spaces for best results
@@ -82,27 +89,58 @@ export async function POST(request: NextRequest) {
           name: "ai",
           text: res.response,
         })
-        console.log("Before Prisman Query")
-        //Update message history array in table against chatId
-        const updateResponse = prisma.chatHistory.update({
-          where: {
-            id: chatId,
-          },
-          data: {
-            messages: messageHistory,
-            updated_at: new Date(),
-          },
-        })
-        Promise.resolve(updateResponse)
-          .then((res) => {
-            console.log(res, "Update Response")
-          })
-          .catch((err) => {
-            console.log(err, "Error in Update")
-          })
-        console.log("After Prisma Query")
-      })
 
+        if (isNormalChat && isFirstMessage) {
+          //Create Dynamic Chat Title for Normal Chat
+          const dynamicChatTitle = getChatTitle(messageHistory)
+          Promise.resolve(dynamicChatTitle)
+            .then((res) => {
+              console.log("Before Prisman Query")
+              //Update message history array in table against chatId
+              const updateResponse = prisma.chatHistory.update({
+                where: {
+                  id: chatId,
+                },
+                data: {
+                  title: res.replace(/^"(.*)"$/, "$1"),
+                  messages: messageHistory,
+                  updated_at: new Date(),
+                },
+              })
+              Promise.resolve(updateResponse)
+                .then((res) => {
+                  console.log(res, "Update Response")
+                })
+                .catch((err) => {
+                  console.log(err, "Error in Update")
+                })
+              console.log("After Prisma Query")
+            })
+            .catch((err) => {
+              console.log(err, "Error in Title")
+            })
+        } else {
+          console.log("Before Prisman Query")
+          //Update message history array in table against chatId
+          const updateResponse = prisma.chatHistory.update({
+            where: {
+              id: chatId,
+            },
+            data: {
+              messages: messageHistory,
+              updated_at: new Date(),
+            },
+          })
+          Promise.resolve(updateResponse)
+            .then((res) => {
+              console.log(res, "Update Response")
+            })
+            .catch((err) => {
+              console.log(err, "Error in Update")
+            })
+          console.log("After Prisma Query")
+        }
+      })
     }
     return new NextResponse(stream.readable, {
       headers: {
