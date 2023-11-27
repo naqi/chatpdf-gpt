@@ -90,34 +90,56 @@ export async function POST(request: NextRequest) {
           text: res.response,
         })
 
-        //Create Dynamic Chat Title for Normal Chat
-        const dynamicChatTitle = getChatTitle(messageHistory)
-        Promise.resolve(dynamicChatTitle)
-          .then((res) => {
-            console.log("Before Prisman Query")
-            //Update message history array in table against chatId
-            const updateResponse = prisma.chatHistory.update({
-              where: {
-                id: chatId,
-              },
-              data: {
-                title: res.replace(/^"(.*)"$/, '$1'),
-                messages: messageHistory,
-                updated_at: new Date(),
-              },
+        if (isNormalChat && isFirstMessage) {
+          //Create Dynamic Chat Title for Normal Chat
+          const dynamicChatTitle = getChatTitle(messageHistory)
+          Promise.resolve(dynamicChatTitle)
+            .then((res) => {
+              console.log("Before Prisman Query")
+              //Update message history array in table against chatId
+              const updateResponse = prisma.chatHistory.update({
+                where: {
+                  id: chatId,
+                },
+                data: {
+                  title: res.replace(/^"(.*)"$/, "$1"),
+                  messages: messageHistory,
+                  updated_at: new Date(),
+                },
+              })
+              Promise.resolve(updateResponse)
+                .then((res) => {
+                  console.log(res, "Update Response")
+                })
+                .catch((err) => {
+                  console.log(err, "Error in Update")
+                })
+              console.log("After Prisma Query")
             })
-            Promise.resolve(updateResponse)
-              .then((res) => {
-                console.log(res, "Update Response")
-              })
-              .catch((err) => {
-                console.log(err, "Error in Update")
-              })
-            console.log("After Prisma Query")
+            .catch((err) => {
+              console.log(err, "Error in Title")
+            })
+        } else {
+          console.log("Before Prisman Query")
+          //Update message history array in table against chatId
+          const updateResponse = prisma.chatHistory.update({
+            where: {
+              id: chatId,
+            },
+            data: {
+              messages: messageHistory,
+              updated_at: new Date(),
+            },
           })
-          .catch((err) => {
-            console.log(err, "Error in Title")
-          })
+          Promise.resolve(updateResponse)
+            .then((res) => {
+              console.log(res, "Update Response")
+            })
+            .catch((err) => {
+              console.log(err, "Error in Update")
+            })
+          console.log("After Prisma Query")
+        }
       })
     }
     return new NextResponse(stream.readable, {
