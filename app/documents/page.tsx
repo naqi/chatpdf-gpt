@@ -13,7 +13,6 @@ const fetcher = (...args: any) => fetch(...args).then(res => res.json())
 
 
 export default function Page() {
-  const { cookieValue } = useCredentialsCookie()
   const { data } = useSWR('/api/documents', fetcher)
   const [documents, setDocuments] = useState([]);
 

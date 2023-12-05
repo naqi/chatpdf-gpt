@@ -59,8 +59,7 @@ const Page = () => {
     // @todo: add support for multiple files
     maxFiles: 100,
     accept: {
-      "application/pdf": [".pdf"],
-      "application/csv": [".csv"],
+      "application/pdf": [".pdf"]
     },
   })
   const ButtonLoading = () => {
@@ -294,16 +293,7 @@ const Page = () => {
               type="submit"
               disabled={
                 !files ||
-                loading ||
-                !cookieValue.openaiApiKey ||
-                !cookieValue.pineconeEnvironment ||
-                !cookieValue.pineconeIndex ||
-                !cookieValue.pineconeApiKey ||
-                !cookieValue.supabaseUrl ||
-                !cookieValue.supabaseKey ||
-                !cookieValue.supabaseBucket ||
-                !cookieValue.supabaseDatabaseUrl ||
-                !cookieValue.supabaseDirectUrl
+                loading
               }
               className="mt-2"
 
