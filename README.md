@@ -48,34 +48,34 @@ To test the functionality of this project using the demo, you will need to provi
     -   Scroll down to the bottom of the page and look for the "Connection string" section.
     -   Choose "Nodejs" and copy the URL.
 
-This connection string will be used for the `NEXT_PUBLIC_DATABASE_URL` environment variable in your application.
+This connection string will be used for the `DATABASE_URL` environment variable in your application.
 
 3.  **Retrieving the Connection Pooling Connection String**:
     -   Still in the "Database" tab of the "Settings" section, scroll to find the "Connection Pooling" section.
     -   Choose "Nodejs" and copy the Connection Pooling URL.
 
-This URL will be used for the `NEXT_PUBLIC_DIRECT_URL` environment variable in your application.
+This URL will be used for the `DIRECT_URL` environment variable in your application.
 
 4.  **Retrieving Storage Keys**:
     -   From your project's page, go to the "Settings" section.
     -   Click the "API" tab in the sidebar.
-    -   Here, you will find your `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_KEY`. Copy these values.
+    -   Here, you will find your `SUPABASE_URL` and `SUPABASE_KEY`. Copy these values.
 
-The `NEXT_PUBLIC_SUPABASE_URL` is the URL for your project, while `NEXT_PUBLIC_SUPABASE_KEY` is the public anonymous key for your project.
+The `SUPABASE_URL` is the URL for your project, while `SUPABASE_KEY` is the public anonymous key for your project.
 
 5.  **Setting up the Supabase Bucket**:
     
     -   From your project's page, go to the "Storage" section.
-    -   Here, create a new bucket or use an existing one. The name of the bucket will be used as `NEXT_PUBLIC_SUPABASE_BUCKET` in your application.
+    -   Here, create a new bucket or use an existing one. The name of the bucket will be used as `SUPABASE_BUCKET` in your application.
 6.  **Setting Up Environment Variables in Your Application**:
     
     -   Now, navigate to your project where you are using Supabase.
     -   Add the following environment variables with the values you copied from the Supabase console:
-        -   `NEXT_PUBLIC_DATABASE_URL`
-        -   `NEXT_PUBLIC_DIRECT_URL`
-        -   `NEXT_PUBLIC_SUPABASE_KEY`
-        -   `NEXT_PUBLIC_SUPABASE_URL`
-        -   `NEXT_PUBLIC_SUPABASE_BUCKET`
+        -   `DATABASE_URL`
+        -   `DIRECT_URL`
+        -   `SUPABASE_KEY`
+        -   `SUPABASE_URL`
+        -   `SUPABASE_BUCKET`
 
 These keys will allow your application to interact with the Supabase services.
 

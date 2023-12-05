@@ -7,8 +7,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("NEXT_PUBLIC_DATABASE_URL")
-  // directUrl         = env("NEXT_PUBLIC_DIRECT_URL")
+  url      = env("DATABASE_URL")
+  // directUrl         = env("DIRECT_URL")
 }
 
 model Documents {

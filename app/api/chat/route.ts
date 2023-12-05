@@ -1,27 +1,23 @@
-import { NextRequest, NextResponse } from "next/server"
-import { Prisma } from "@prisma/client"
-
 import { getChain } from "@/lib/langchain/chain"
 import { ModelHandler } from "@/lib/langchain/model"
 import { getPineconeStore } from "@/lib/langchain/vectorstores/pinecone"
-import { createPrisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
 export const runtime = "edge"
 
 export async function POST(request: NextRequest) {
-  console.log('\n\n INCOMING_REQUEST',request, '\n\n')
   const body = await request.json()
   // Get credentials from ENV
   const credentials = {
-    pineconeIndex: process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
-    pineconeEnvironment: process.env.NEXT_PUBLIC_PINECONE_ENVIRONMENT,
-    pineconeApiKey: process.env.NEXT_PUBLIC_PINECONE_API_KEY,
-    openaiApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    supabaseBucket: process.env.NEXT_PUBLIC_SUPABASE_BUCKET,
-    supabaseDatabaseUrl: process.env.NEXT_PUBLIC_DATABASE_URL,
-    supabaseDirectUrl: process.env.NEXT_PUBLIC_DIRECT_URL,
+    pineconeIndex: process.env.PINECONE_INDEX_NAME,
+    pineconeEnvironment: process.env.PINECONE_ENVIRONMENT,
+    pineconeApiKey: process.env.PINECONE_API_KEY,
+    openaiApiKey: process.env.OPENAI_API_KEY,
+    supabaseKey: process.env.SUPABASE_KEY,
+    supabaseUrl: process.env.SUPABASE_URL,
+    supabaseBucket: process.env.SUPABASE_BUCKET,
+    supabaseDatabaseUrl: process.env.DATABASE_URL,
+    supabaseDirectUrl: process.env.DIRECT_URL
   }
   if (
     !credentials ||
@@ -53,7 +49,7 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (error: any) {
-    console.log('\n\nCHAT_API_ERROR_BACKEND\n\n', error, `\n\n`);
+    console.log("error", error)
     return NextResponse.json(
       { error: error.message || "Something went wrong" },
       { status: 500 }
