@@ -60,6 +60,7 @@ const Page = () => {
     maxFiles: 100,
     accept: {
       "application/pdf": [".pdf"],
+      "application/csv": [".csv"],
     },
   })
   const ButtonLoading = () => {
@@ -240,7 +241,7 @@ const Page = () => {
         } catch (error) {
           setLoading(false);
           setError('An error occurred while fetching the data. Please try again.');
-          console.log('\n\nCHAT_API_ERROR_FRONTEND\n\n', error, `\n\n`);
+          console.log('error', error);
         }
       }
     }
