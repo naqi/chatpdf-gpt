@@ -151,24 +151,6 @@ const Page = () => {
     textAreaRef.current?.focus();
   }, []);
 
-  // checks if credentials are set
-  const checkCredentials = () => {
-    if (
-      !cookieValue.openaiApiKey ||
-      !cookieValue.pineconeEnvironment ||
-      !cookieValue.pineconeIndex ||
-      !cookieValue.pineconeApiKey ||
-      !cookieValue.supabaseUrl ||
-      !cookieValue.supabaseKey ||
-      !cookieValue.supabaseBucket ||
-      !cookieValue.supabaseDatabaseUrl ||
-      !cookieValue.supabaseDirectUrl
-    ) {
-      return false;
-    }
-    return true;
-  };
-
   //handle form submission
   async function handleSubmit(e: any) {
     e.preventDefault();
@@ -274,22 +256,6 @@ const Page = () => {
 
   return (
     <section className="container grid grid-cols-2 items-center gap-6 pb-8 pt-6 md:py-10">
-    {!checkCredentials() && <Alert className="col-span-2" variant="warning">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                  <div>
-          This app requires you to{" "}
-          <Link
-            className="cursor-pointer text-blue-500 hover:text-blue-700 hover:underline"
-            href="/credentials"
-            rel="noreferrer"
-          >
-            add your credentials
-          </Link>{" "}
-          to work properly.
-        </div>
-                  </AlertDescription>
-                </Alert>}
       {!document && <div className="min-w-1/5 col-span-2 flex flex-col items-start gap-2 md:col-span-1">
         <h2 className="mt-10 scroll-m-20 pb-2 text-2xl font-semibold tracking-tight transition-colors first:mt-0">
           Upload your PDF
