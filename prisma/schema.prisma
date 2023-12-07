@@ -11,17 +11,18 @@ datasource db {
 }
 
 model Documents {
-  id          String   @id @default(cuid())
+  id         String   @id @default(cuid())
   name       String?
-  url       String
-  created_at   DateTime @default(now())
+  url        String
+  created_at DateTime @default(now())
 }
 
 model ChatHistory {
-  id          String   @id @default(cuid())
-  childId       String
-  title       String?
-  messages       Json
-  created_at   DateTime @default(now())
-  updated_at   DateTime @default(now())
+  id         String   @id @default(cuid())
+  childId    String
+  title      String?
+  messages   Json
+  chatType   String   @default("parenthoodGPT")
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 }
