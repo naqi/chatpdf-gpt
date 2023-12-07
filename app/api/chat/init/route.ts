@@ -5,7 +5,7 @@ import { createPrisma } from "@/lib/prisma"
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { childId, childContext } = body
+  const { childId, childContext, chatTitle } = body
 
   const credentials = {
     supabaseDatabaseUrl: process.env.NEXT_PUBLIC_DATABASE_URL,
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     data: {
       childId: childId,
       messages: childInitialContextMessage,
-      title: "Chat Title" //TODO: Need to be dynamic
+      title: chatTitle
     },
   })
 
