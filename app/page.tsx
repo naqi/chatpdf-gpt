@@ -10,7 +10,7 @@ const Page = () => {
   const isLoggedIn = !!loginCookies?.value;
 
   if (!isLoggedIn) {
-    return <PasswordPromptDialog onSubmit={undefined} />;
+    return <PasswordPromptDialog />;
   } else {
     // User is authenticated, load data and render content
     return <UploadDocuments />

@@ -7,8 +7,7 @@ const PasswordPromptDialog = ({ onSubmit }) => {
   const [passwordIncorrect, setPasswordIncorrect] = useState(false)
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    const onSubmit = async (e: React.FormEvent) => {
+  const handleSubmit =async (e: React.FormEvent) => {
       e.preventDefault();
       setLoading(true);
       const request = await fetch(`/api`, {
@@ -20,8 +19,8 @@ const PasswordPromptDialog = ({ onSubmit }) => {
       if (request.status !== 200)
         return setPasswordIncorrect(true), setLoading(false);
       else window.location.reload();
-    };
   };
+
 
     return (
       <div className="h-ful  container grid w-2 items-center gap-1 pb-1 pt-8">
