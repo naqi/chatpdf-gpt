@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
     !credentials.pineconeEnvironment ||
     !credentials.pineconeApiKey
   ) {
-    return NextResponse.redirect("/credentials")
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    )
   }
 
   const { prompt, messages: history, id } = body

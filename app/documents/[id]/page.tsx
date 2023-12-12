@@ -212,7 +212,7 @@ const { highlight } = searchPluginInstance;
 
               {publicUrl && <Viewer theme={{
                 theme: 'auto'
-              }} defaultScale={SpecialZoomLevel.PageWidth} viewMode={ViewMode.SinglePage} initialPage={0} localization={ar_AE as unknown as LocalizationMap} plugins={[defaultLayoutPluginInstance, jumpToPagePluginInstance, highlightPluginInstance, searchPluginInstance]} fileUrl={publicUrl} />}
+              }} defaultScale={SpecialZoomLevel.PageWidth} viewMode={ViewMode.SinglePage} initialPage={0} plugins={[defaultLayoutPluginInstance, jumpToPagePluginInstance, highlightPluginInstance, searchPluginInstance]} fileUrl={publicUrl} />}
             </Worker>
 
 

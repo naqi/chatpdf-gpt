@@ -2,8 +2,7 @@
 import PasswordPromptDialog from "@/components/PasswordPromptDialog";
 import React from "react";
 import {cookies} from "next/headers";
-import UploadDocuments from "@/app/UploadDocuments";
-import Documents from "@/app/documents/Documents";
+import Documents from "@/app/documents/documents";
 
 const Page = () => {
   const cookiesStore = cookies();
