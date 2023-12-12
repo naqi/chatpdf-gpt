@@ -321,7 +321,7 @@ const UploadDocuments = () => {
 
           <div className={styles.cloud}>
             <ScrollToBottom
-              className="relative w-full h-full"
+              className="relative h-full w-full"
               scrollViewClassName="h-full w-full overflow-y-auto"
 
             >

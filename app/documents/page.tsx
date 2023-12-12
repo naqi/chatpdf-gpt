@@ -1,5 +1,5 @@
 // app/page.tsx
-import PasswordPromptDialog from "@/components/PasswordPromptDialog";
+import PasswordPromptDialog from "@/components/password-prompt-dialog";
 import React from "react";
 import {cookies} from "next/headers";
 import Documents from "@/app/documents/documents";

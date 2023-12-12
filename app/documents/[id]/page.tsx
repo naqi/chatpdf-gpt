@@ -3,11 +3,9 @@
 import React,{ useState, useEffect, useReducer, useRef, KeyboardEvent, useCallback } from 'react';
 
 import useSWR, { mutate } from 'swr';
-import { createClient } from '@supabase/supabase-js'
 // Import the main component
-import { LocalizationMap, SpecialZoomLevel, ViewMode, Viewer } from '@react-pdf-viewer/core';
-// Import the localization file
-import ar_AE from '@react-pdf-viewer/locales/lib/ar_AE.json';
+import { SpecialZoomLevel, ViewMode, Viewer } from '@react-pdf-viewer/core';
+
 // Import the styles
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
@@ -222,13 +220,11 @@ const { highlight } = searchPluginInstance;
 
               <div className={styles.cloud}>
                 <ScrollToBottom
-                  className="relative w-full h-full"
-                  scrollViewClassName="h-full w-full overflow-y-auto"
-
-                >
-                              <div className="w-full transition-width flex flex-col items-stretch flex-1">
+                  className="relative h-full w-full"
+                  scrollViewClassName="h-full w-full overflow-y-auto">
+                              <div className="transition-width flex w-full flex-1 flex-col items-stretch">
               <div className="flex-1">
-                <div className="flex flex-col prose prose-lg prose-invert">
+                <div className="prose prose-lg prose-invert flex flex-col">
 
                   <div ref={messageListRef} className={styles.messagelist}>
                     {state.messages.filter((message: any) => message.name != 'system').map((message, index) => {
