@@ -10,7 +10,7 @@ const PasswordPromptDialog = () => {
   const handleSubmit =async (e: React.FormEvent) => {
       e.preventDefault();
       setLoading(true);
-      const request = await fetch(`/api`, {
+      const request = await fetch(`/api/login`, {
         body: JSON.stringify({password}),
         headers: {"Content-Type": "application/json"},
         method: "post",
