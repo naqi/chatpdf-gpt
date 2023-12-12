@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-const PasswordPromptDialog = ({ onSubmit }) => {
+const PasswordPromptDialog = () => {
   const [password, setPassword] = useState('');
   const [passwordIncorrect, setPasswordIncorrect] = useState(false)
   const [loading, setLoading] = useState(false);
