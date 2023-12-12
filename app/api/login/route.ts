@@ -1,6 +1,7 @@
 import { serialize } from "cookie";
+import {NextRequest, NextResponse} from "next/server";
 
-export async function POST(request: Request, params: { slug: string }) {
+export async function POST(request: NextRequest) {
   const data: { password: string } = await request.json();
   const password = data.password;
   const cookie = serialize(process.env.NEXT_PUBLIC_PASSWORD_COOKIE_NAME!, "true",
@@ -10,12 +11,12 @@ export async function POST(request: Request, params: { slug: string }) {
   });
 
   if (process.env.NEXT_PUBLIC_PAGE_PASSWORD !== password) {
-    return new Response("incorrect password", {
+    return new NextResponse("incorrect password", {
       status: 401,
     });
   }
 
-  return new Response("password correct", {
+  return new NextResponse("password correct", {
     status: 200,
     headers: {
       "Set-Cookie": cookie,
