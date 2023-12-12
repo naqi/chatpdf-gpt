@@ -40,9 +40,6 @@ export async function POST(request: NextRequest) {
 
     const modelHandler = new ModelHandler(writer)
     const model = modelHandler.getModel(credentials.openaiApiKey)
-    console.log(model)
-
-    console.log(modelHandler)
     const response = getChain(model, vectorStore, sanitizedQuestion, history)
 
     return new NextResponse(stream.readable, {
