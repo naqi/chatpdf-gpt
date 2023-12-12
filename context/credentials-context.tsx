@@ -8,7 +8,7 @@ const initialCredentials = {
   openaiApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
   pineconeEnvironment: process.env.NEXT_PUBLIC_PINECONE_ENVIRONMENT,
   pineconeBucket: process.env.PINECONE_BUCKET_NAME,
-  pineconeIndex: process.env.NEXT_PUBLICPINECONE_INDEX_NAME,
+  pineconeIndex: process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
   pineconeApiKey: process.env.NEXT_PUBLIC_PINECONE_API_KEY,
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
   supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_KEY,

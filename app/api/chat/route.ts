@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   // Get credentials from ENV
   const credentials = {
-    pineconeIndex: process.env.NEXT_PUBLICPINECONE_INDEX_NAME,
+    pineconeIndex: process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
     pineconeEnvironment: process.env.NEXT_PUBLIC_PINECONE_ENVIRONMENT,
     pineconeApiKey: process.env.NEXT_PUBLIC_PINECONE_API_KEY,
     openaiApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -40,7 +40,9 @@ export async function POST(request: NextRequest) {
 
     const modelHandler = new ModelHandler(writer)
     const model = modelHandler.getModel(credentials.openaiApiKey)
+    console.log(model)
 
+    console.log(modelHandler)
     const response = getChain(model, vectorStore, sanitizedQuestion, history)
 
     return new NextResponse(stream.readable, {
