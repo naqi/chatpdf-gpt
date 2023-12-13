@@ -33,7 +33,7 @@ const PasswordPromptDialog = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="border-solid border-2 mt-8 outline-1 p-4" type="submit">Submit</button>
+          <button className="mt-8 border-2 border-solid p-4 outline-1" type="submit">Submit</button>
         </form>
       </div>
     );
