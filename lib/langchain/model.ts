@@ -37,7 +37,7 @@ export class ModelHandler {
     return new ChatOpenAI({
       openAIApiKey: openaiApiKey,
       modelName: "gpt-4",
-      temperature: 0.3,
+      temperature: 0.6,
       maxTokens: 1200,
       streaming: true, 
       maxRetries: 1,
