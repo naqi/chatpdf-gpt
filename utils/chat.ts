@@ -19,7 +19,7 @@ export const getChatTitle = async (messageHistory) => {
   const model = new ChatOpenAI({
     openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     modelName: "gpt-4",
-    temperature: 0.3,
+    temperature: 0.6,
     maxTokens: 1000,
   })
 
