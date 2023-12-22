@@ -36,8 +36,11 @@ const Page = () => {
     messages: [
       {
         name: "system",
-        text: "Act as an parenting expert. Self reflect on your answers before delivering them to the user. At the end of your first response, provide user with three questions for them to ask for continued education on the topic. Reply to questions based on the knowledge you have available. ",
-      },
+        text: "Act as an parenting expert. Reply to questions based on the knowledge you have available. ",
+      },{
+        name: "system",
+        text: "At the end of your first response, provide user with three questions for them to ask for continued education on the topic."
+      }
     ],
     assistantThinking: false,
     isWriting: false,
