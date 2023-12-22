@@ -247,7 +247,7 @@ const Page = () => {
                   placeholder={
                     loading
                       ? "Waiting for response..."
-                      : "Suggest some solid for one year old kid"
+                      : "How can we help your family?"
                   }
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
