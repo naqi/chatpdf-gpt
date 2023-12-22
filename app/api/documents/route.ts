@@ -10,6 +10,7 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import { PineconeStore } from "langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
+import {DocxLoader} from "langchain/document_loaders/fs/docx";
 
 export async function POST(request: Request) {
   const body = await request.json()
@@ -38,9 +39,17 @@ export async function POST(request: Request) {
   }: any = supabase.storage.from(supabaseBucket).getPublicUrl(body.url)
   const res = await axios.get(publicUrl, { responseType: "arraybuffer" })
 
-  // Write the PDF to a temporary file. This is necessary because the PDFLoader
-  fs.writeFileSync(`/tmp/${data.id}.pdf`, res.data)
-  const loader = new PDFLoader(`/tmp/${data.id}.pdf`)
+  const fileExt = body?.name.split('.').pop();
+
+  // Write to a temporary file. This is necessary because the PDFLoader
+  fs.writeFileSync(`/tmp/${data.id}`, res.data)
+
+  var loader
+  if(fileExt === "pdf"){
+    loader = new PDFLoader(`/tmp/${data.id}.pdf`)
+  } else if ( fileExt === "docx"){
+    loader = new DocxLoader(`/tmp/${data.id}`)
+  }
 
   const rawDocs = await loader.load()
   /* Split text into chunks */

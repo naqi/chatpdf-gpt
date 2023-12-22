@@ -18,7 +18,7 @@ export const uploadToSubabase = async (file: any, supabaseUrl: string, supabaseK
     const { data, error } = await supabase
       .storage
       .from(supabaseBucket)
-      .upload(`${Date.now()}.pdf`, file, {
+      .upload(`${Date.now()}`, file, {
         cacheControl: '3600',
         upsert: false
       })

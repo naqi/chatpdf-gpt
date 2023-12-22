@@ -57,7 +57,9 @@ const UploadDocuments = () => {
     // @todo: add support for multiple files
     maxFiles: 100,
     accept: {
-      "application/pdf": [".pdf"]
+      "application/pdf": [".pdf"],
+      "application/docx": [".docx"],
+      "application/text":[".txt", ".csv"],
     },
   })
   const ButtonLoading = () => {

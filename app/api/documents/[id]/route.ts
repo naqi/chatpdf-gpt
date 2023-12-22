@@ -62,7 +62,6 @@ export async function DELETE(request: NextRequest, { params: { id } }) {
       id,
     },
   })
-  console.log("document", document)
   // delete pinecone namespace
   const index = pinecone.Index(pineconeIndex)
   await index.delete1({ deleteAll: true, namespace: id })
