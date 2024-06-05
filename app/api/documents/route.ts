@@ -11,22 +11,15 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import { PineconeStore } from "langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
 import {PINECONE_NAME_SPACE} from "@/config/pinecone";
+import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
+
+import credentials from "@/utils/credentials";
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const {
-    openaiApiKey,
-    supabaseBucket,
-    pineconeEnvironment,
-    supabaseUrl,
-    supabaseKey,
-    pineconeIndex,
-    pineconeApiKey,
-    supabaseDatabaseUrl,
-  } = body
-  const prisma = createPrisma({ url: supabaseDatabaseUrl })
-  const supabase = createClient(supabaseUrl, supabaseKey)
-  const pinecone = await initPinecone(pineconeEnvironment, pineconeApiKey)
+  const prisma = createPrisma()
+  const supabase = createClient(credentials.supabaseUrl, credentials.supabaseKey)
+
   const data = await prisma.documents.create({
     data: {
       url: body?.url,
@@ -36,7 +29,7 @@ export async function POST(request: Request) {
   })
   const {
     data: { publicUrl },
-  }: any = supabase.storage.from(supabaseBucket).getPublicUrl(body.url)
+  }: any = supabase.storage.from(credentials.supabaseBucket).getPublicUrl(body.url)
   const res = await axios.get(publicUrl, { responseType: "arraybuffer" })
 
   // Write the PDF to a temporary file. This is necessary because the PDFLoader
@@ -55,35 +48,65 @@ export async function POST(request: Request) {
   console.log(`creating vector store for ${body.name}...`)
   /*create and store the embeddings in the vectorStore*/
   const embeddings = new OpenAIEmbeddings({
-    openAIApiKey: openaiApiKey,
+    openAIApiKey: credentials.openaiApiKey,
     stripNewLines: true,
     verbose: true,
     timeout: 60000,
     maxConcurrency: 5,
   })
-  const index = pinecone.Index(pineconeIndex) //change to your own index name
-  // pinecone_name_space is the id of the document
-  //embed the PDF documents
-  await PineconeStore.fromDocuments(docs, embeddings, {
-    pineconeIndex: index,
-    namespace: data.id,
-    textKey: "text",
-  })
-
+  await uploadToSupabase(docs, embeddings)
+  // await uploadEmbeddingsToPinecone(docs, embeddings, data)
   return NextResponse.json({ data })
 }
 
+async function uploadToSupabase(docs, embeddings: OpenAIEmbeddings) {
+  const supabase = createClient(credentials.supabaseUrl, credentials.supabaseKey)
 
-export async function GET(request: NextRequest) {
-  // Get credentials from cookies
-  const credentials = JSON.parse(request.cookies.get('credentials')?.value ||  null)
-  if (!credentials) {
-    return NextResponse.json({ data: [] });
+  const vectorstore = await SupabaseVectorStore.fromDocuments(
+    docs,
+    embeddings,
+    {
+      client: supabase,
+      tableName: "documents",
+      queryName: "match_documents",
+    }
+  );
+  return vectorstore
+}
+
+async function uploadEmbeddingsToPinecone(docs, embeddings, data) {
+  const pinecone = await initPinecone()
+
+  const checkStatus = async () => {
+    const {status} = await pinecone.describeIndex({
+      indexName: credentials.pineconeIndex,
+    })
+    if (status?.ready) {
+      return status
+    } else {
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(checkStatus()), 5000)
+      })
+    }
   }
 
+  await checkStatus()
+  const index = pinecone.Index(credentials.pineconeIndex) //change to your own index name
+  // pinecone_name_space is the id of the document
+  //embed the PDF documents
+  try {
+    await PineconeStore.fromDocuments(docs, embeddings, {
+      pineconeIndex: index,
+      namespace: data.id,
+      textKey: "text",
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
+export async function GET(request: NextRequest) {
   // refactor this
-  const {supabaseDatabaseUrl, supabaseDirectUrl} = credentials
-  const prisma = createPrisma({ url: supabaseDatabaseUrl });
+  const prisma = createPrisma();
     const data = await prisma.documents.findMany({
         orderBy: {
             created_at: 'desc'
