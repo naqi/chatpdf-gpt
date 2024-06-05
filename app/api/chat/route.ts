@@ -4,32 +4,24 @@ import { Prisma } from "@prisma/client"
 
 import { getChain } from "@/lib/langchain/chain"
 import { ModelHandler } from "@/lib/langchain/model"
-import { getPineconeStore } from "@/lib/langchain/vectorstores/pinecone"
 import { createPrisma } from "@/lib/prisma"
+import credentials from "@/utils/credentials";
+import {getSupabaseStore} from "@/lib/langchain/vectorstores/supabase";
 
 export async function POST(request: NextRequest) {
   console.log("\n\n INCOMING_REQUEST", request, "\n\n")
   const body = await request.json()
   // Get credentials from ENV
-  const credentials = {
-    pineconeIndex: process.env.NEXT_PUBLIC_PINECONE_INDEX_NAME,
-    pineconeEnvironment: process.env.NEXT_PUBLIC_PINECONE_ENVIRONMENT,
-    pineconeApiKey: process.env.NEXT_PUBLIC_PINECONE_API_KEY,
-    openaiApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_KEY,
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    supabaseBucket: process.env.NEXT_PUBLIC_SUPABASE_BUCKET,
-    supabaseDatabaseUrl: process.env.NEXT_PUBLIC_DATABASE_URL,
-    supabaseDirectUrl: process.env.NEXT_PUBLIC_DIRECT_URL,
-  }
-  if (
-    !credentials ||
-    !credentials.pineconeIndex ||
-    !credentials.pineconeEnvironment ||
-    !credentials.pineconeApiKey
-  ) {
-    return NextResponse.json({ messagee: "Unauthorized" })
-  }
+
+  const { prompt, chatId } = body
+
+  //Get history from supabase against child id
+  const prisma = createPrisma()
+  const historyFromDB = await prisma.chatHistory.findFirst({
+    where: {
+      id: chatId,
+    },
+  })
 
   const {
     prompt,
@@ -63,14 +55,14 @@ export async function POST(request: NextRequest) {
     const stream = new TransformStream()
     const writer = stream.writable.getWriter()
 
-    const vectorStore = await getPineconeStore(credentials)
-
+    // const vectorStore = await getPineconeStore(credentials)
+    const supabaseStore = await getSupabaseStore()
     const modelHandler = new ModelHandler(writer)
     const model = modelHandler.getModel(credentials.openaiApiKey)
 
     const response = getChain(
       model,
-      vectorStore,
+      supabaseStore,
       sanitizedQuestion,
       messageHistory
     )

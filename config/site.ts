@@ -1,9 +1,9 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Parenthood Chat",
+  name: "PDF Chat",
   description:
-    "Parenthood Chat",
+    "Chat with any pdf file, powered by Langchain, Pinecone, Supabase and OpenAI",
   mainNav: [
     {
       title: "Home",
@@ -12,10 +12,18 @@ export const siteConfig = {
     {
       title: "Documents",
       href: "/documents",
-    }
+    },
+    {
+      title: "Credentials",
+      href: "/credentials",
+    },
+    {
+      title: "Github",
+      href: "https://github.com/EmeraldLabs/chatpdf-gpt",
+    },
   ],
   links: {
-    twitter: "https://twitter.com/anis_marrouchi",
-    github: "https://github.com/anis-marrouchi/chatpdf-gpt",
+    twitter: "https://twitter.com",
+    github: "https://github.com/EmeraldLabs/chatpdf-gpt",
   },
 }

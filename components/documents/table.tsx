@@ -12,8 +12,8 @@ import { ReactElement, JSXElementConstructor, ReactFragment, Key, ReactPortal } 
 import { Button } from "../ui/button";
 import { Eye, Trash } from "lucide-react"
 import { Document } from "@/lib/supabase";
-  
-  
+
+
   export function DocumentsTable({documents, setDocuments}: any) {
     const handleDelete = async (id: any ) => {
       // send delete request to api and remove from documents
@@ -58,4 +58,3 @@ import { Document } from "@/lib/supabase";
       </Table>
     )
   }
-  

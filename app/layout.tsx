@@ -1,15 +1,15 @@
 import "@/styles/globals.css"
 import { Metadata } from "next"
-import { AuthCookieProvider } from "@/context/auth-context"
-import { Analytics } from "@vercel/analytics/react"
 
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
-import { Toaster } from "@/components/ui/toaster"
 import { SiteHeader } from "@/components/site-header"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Analytics } from "@vercel/analytics/react";
+import { Toaster } from "@/components/ui/toaster"
+
 
 export const metadata: Metadata = {
   title: {
@@ -44,14 +44,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
           )}
         >
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-              <AuthCookieProvider>
-                <div className="relative flex min-h-screen flex-col">
-                  <SiteHeader />
-                  <div className="flex-1">{children}</div>
-                </div>
-                <TailwindIndicator />
-                <Toaster />
-              </AuthCookieProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+            </div>
+            <TailwindIndicator />
+            <Toaster />
           </ThemeProvider>
           <Analytics />
         </body>

@@ -39,7 +39,6 @@ import { Button } from '@/components/ui/button';
 import { highlightPlugin } from '@react-pdf-viewer/highlight';
 import '@react-pdf-viewer/highlight/lib/styles/index.css';
 import { Message, reducer } from '@/lib/chat';
-import { configurationValues } from '@/utils/auth';
 
 const Page = ({ params }: {
   params: { id: string }
@@ -189,18 +188,19 @@ const { highlight } = searchPluginInstance;
 
       useEffect(() => {
         const fetchDocument = async () => {
-          if (doc && cookieValue) {
-            const supabase = supabaseClient(cookieValue.supabaseUrl, cookieValue.supabaseKey);
+          if (doc) {
+            const supabase = supabaseClient();
             const url: any = supabase
               .storage
-              .from(cookieValue.supabaseBucket || 'public')
+              .from(process.env.NEXT_PUBLIC_SUPABASE_BUCKET)
               .getPublicUrl(doc.data.url)
+            console.log(url.data.publicUrl)
             setPublicUrl(url.data.publicUrl);
             setDocument(doc);
           }
         };
         fetchDocument();
-      }, [doc, cookieValue]);
+      }, [doc]);
 
       return (
         <section className="container grid grid-cols-2 items-center gap-6 pb-8 pt-6 md:py-10">

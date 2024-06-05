@@ -13,111 +13,107 @@ import { PineconeStore } from "langchain/vectorstores/pinecone"
 
 import { PINECONE_NAME_SPACE } from "@/config/pinecone"
 import { createPrisma } from "@/lib/prisma"
+import {PINECONE_NAME_SPACE} from "@/config/pinecone";
+import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 
+import credentials from "@/utils/credentials";
 
 export async function POST(request: Request) {
-  const authHeader = request.headers.get("authorization") || null
-  if (!authHeader) {
-    return NextResponse.json({ data: [] })
-  } else {
-    try {
-      const isAuthorized = validateCognitoToken(authHeader)
+  const body = await request.json()
+  const prisma = createPrisma()
+  const supabase = createClient(credentials.supabaseUrl, credentials.supabaseKey)
 
-      if (isAuthorized) {
-        const body = await request.json()
-        const {
-          openaiApiKey,
-          supabaseBucket,
-          pineconeEnvironment,
-          supabaseUrl,
-          supabaseKey,
-          pineconeIndex,
-          pineconeApiKey,
-          supabaseDatabaseUrl,
-        } = configurationValues
-        const prisma = createPrisma({ url: supabaseDatabaseUrl })
-        const supabase = createClient(supabaseUrl, supabaseKey)
-        const pinecone = await initPinecone(pineconeEnvironment, pineconeApiKey)
-        const data = await prisma.documents.create({
-          data: {
-            url: body?.url,
-            // @ts-ignore
-            name: body?.name,
-          },
-        })
-        const {
-          data: { publicUrl },
-        }: any = supabase.storage.from(supabaseBucket).getPublicUrl(body.url)
-        const res = await axios.get(publicUrl, { responseType: "arraybuffer" })
+  const data = await prisma.documents.create({
+    data: {
+      url: body?.url,
+      // @ts-ignore
+      name: body?.name,
+    },
+  })
+  const {
+    data: { publicUrl },
+  }: any = supabase.storage.from(credentials.supabaseBucket).getPublicUrl(body.url)
+  const res = await axios.get(publicUrl, { responseType: "arraybuffer" })
 
-        // Write the PDF to a temporary file. This is necessary because the PDFLoader
-        fs.writeFileSync(`/tmp/${data.id}.pdf`, res.data)
-        const loader = new PDFLoader(`/tmp/${data.id}.pdf`)
+  // Write the PDF to a temporary file. This is necessary because the PDFLoader
+  fs.writeFileSync(`/tmp/${data.id}.pdf`, res.data)
+  const loader = new PDFLoader(`/tmp/${data.id}.pdf`)
 
-        const rawDocs = await loader.load()
-        /* Split text into chunks */
-        const textSplitter = new RecursiveCharacterTextSplitter({
-          chunkSize: 1536,
-          chunkOverlap: 200,
-        })
+  const rawDocs = await loader.load()
+  /* Split text into chunks */
+  const textSplitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1536,
+    chunkOverlap: 200,
+  })
 
-        const docs = await textSplitter.splitDocuments(rawDocs)
+  const docs = await textSplitter.splitDocuments(rawDocs)
 
-        console.log(`creating vector store for ${body.name}...`)
-        /*create and store the embeddings in the vectorStore*/
-        const embeddings = new OpenAIEmbeddings({
-          openAIApiKey: openaiApiKey,
-          stripNewLines: true,
-          verbose: true,
-          timeout: 60000,
-          maxConcurrency: 5,
-        })
-        const index = pinecone.Index(pineconeIndex) //change to your own index name
-        // pinecone_name_space is the id of the document
-        //embed the PDF documents
-        await PineconeStore.fromDocuments(docs, embeddings, {
-          pineconeIndex: index,
-          namespace: data.id,
-          textKey: "text",
-        })
-
-        return NextResponse.json({ data })
-      } else {
-        return NextResponse.json({ message: "Unauthorized" })
-      }
-    } catch (error) {
-      return NextResponse.json({ message: "Something went wrong" })
-    }
-  }
+  console.log(`creating vector store for ${body.name}...`)
+  /*create and store the embeddings in the vectorStore*/
+  const embeddings = new OpenAIEmbeddings({
+    openAIApiKey: credentials.openaiApiKey,
+    stripNewLines: true,
+    verbose: true,
+    timeout: 60000,
+    maxConcurrency: 5,
+  })
+  await uploadToSupabase(docs, embeddings)
+  // await uploadEmbeddingsToPinecone(docs, embeddings, data)
+  return NextResponse.json({ data })
 }
 
+async function uploadToSupabase(docs, embeddings: OpenAIEmbeddings) {
+  const supabase = createClient(credentials.supabaseUrl, credentials.supabaseKey)
+
+  const vectorstore = await SupabaseVectorStore.fromDocuments(
+    docs,
+    embeddings,
+    {
+      client: supabase,
+      tableName: "documents",
+      queryName: "match_documents",
+    }
+  );
+  return vectorstore
+}
+
+async function uploadEmbeddingsToPinecone(docs, embeddings, data) {
+  const pinecone = await initPinecone()
+
+  const checkStatus = async () => {
+    const {status} = await pinecone.describeIndex({
+      indexName: credentials.pineconeIndex,
+    })
+    if (status?.ready) {
+      return status
+    } else {
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(checkStatus()), 5000)
+      })
+    }
+  }
+
+  await checkStatus()
+  const index = pinecone.Index(credentials.pineconeIndex) //change to your own index name
+  // pinecone_name_space is the id of the document
+  //embed the PDF documents
+  try {
+    await PineconeStore.fromDocuments(docs, embeddings, {
+      pineconeIndex: index,
+      namespace: data.id,
+      textKey: "text",
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 export async function GET(request: NextRequest) {
-  // Get credentials from cookies
-  const credentials = configurationValues
-  if (!credentials) {
-    return NextResponse.json({ messagee: "Unauthorized" })
+  // refactor this
+  const prisma = createPrisma();
+    const data = await prisma.documents.findMany({
+        orderBy: {
+            created_at: 'desc'
+        }
+    })
+    return NextResponse.json({ data });
   }
-  const authHeader = JSON.parse(request.cookies.get("auth")?.value || null)
-  if (!authHeader) {
-    return NextResponse.json({ data: [] })
-  } else {
-    try {
-      const isAuthorized = validateCognitoToken(authHeader.AccessToken)
-
-      if (isAuthorized) {
-        const { supabaseDatabaseUrl, supabaseDirectUrl } = credentials
-        const prisma = createPrisma({ url: supabaseDatabaseUrl })
-        const data = await prisma.documents.findMany({
-          orderBy: {
-            created_at: "desc",
-          },
-        })
-        return NextResponse.json({ data })
-      } else {
-        return NextResponse.json({ message: "Unauthorized", data: [] })
-      }
-    } catch (error) {
-      return NextResponse.json({ message: "Something went wrong" })
-    }
-  }
-}
