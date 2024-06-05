@@ -27,13 +27,9 @@ import 'katex/dist/katex.min.css'
 // @ts-ignore
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
-
-import { useCredentialsCookie } from "@/context/credentials-context"
 import { useToast } from "@/hooks/use-toast"
 import { Check, Loader2, UploadCloud } from "lucide-react"
 import { useDropzone } from "react-dropzone"
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
 // @ts-ignore
 const fetcher = (...args: any) => fetch(...args).then(res => res.json())
 
@@ -49,7 +45,6 @@ import ScrollToBottom from 'react-scroll-to-bottom';
 const Page = () => {
   const [canUpload, setCanUpload] = useState(false);
   const [files, setFiles] = useState(null)
-  const { cookieValue } = useCredentialsCookie()
   const { toast } = useToast()
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(acceptedFiles)
@@ -118,7 +113,7 @@ const Page = () => {
     try {
       const allFileUploads = [];
       for (const file of files) {
-        const uploadData: any = await uploadToSubabase(file, cookieValue.supabaseUrl, cookieValue.supabaseKey, cookieValue.supabaseBucket);
+        const uploadData: any = await uploadToSubabase(file);
         const res = await fetch('/api/documents', {
           method: 'POST',
           headers: {
@@ -128,8 +123,6 @@ const Page = () => {
             url: uploadData.path,
             // @ts-ignore
             name: file.name,
-            // Add any other associated data here
-            ...cookieValue
           })
         });
         allFileUploads.push(allFileUploads)
@@ -144,29 +137,12 @@ const Page = () => {
       return {}; // Here you can return the data you get from the server if you wish
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
   useEffect(() => {
     textAreaRef.current?.focus();
   }, []);
-
-  // checks if credentials are set
-  const checkCredentials = () => {
-    if (
-      !cookieValue.openaiApiKey ||
-      !cookieValue.pineconeEnvironment ||
-      !cookieValue.pineconeIndex ||
-      !cookieValue.pineconeApiKey ||
-      !cookieValue.supabaseUrl ||
-      !cookieValue.supabaseKey ||
-      !cookieValue.supabaseBucket ||
-      !cookieValue.supabaseDatabaseUrl ||
-      !cookieValue.supabaseDirectUrl
-    ) {
-      return false;
-    }
-    return true;
-  };
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -193,10 +169,8 @@ const Page = () => {
             method: 'POST',
             signal: signal,
             body: JSON.stringify({
-              ...cookieValue,
               prompt,
-              messages: state.messages,
-              id: document.id,
+              messages: state.messages
             }),
           });
           const data = res.body;
@@ -217,20 +191,18 @@ const Page = () => {
           }
           if (done) {
             // retrieve document sources
-            const res = await fetch('/api/sources', {
-              method: 'POST',
-              body: JSON.stringify({
-                prompt,
-                messages: state.messages,
-                id: document.id,
-                ...cookieValue,
-              }),
-            });
-            const { sources } = await res.json();
-            if (sources) {
-              dispatch({ type: "appendSourceDocs", payload: sources });
-            }
-            dispatch({ type: "done" });
+            // const res = await fetch('/api/sources', {
+            //   method: 'POST',
+            //   body: JSON.stringify({
+            //     prompt,
+            //     messages: state.messages
+            //   }),
+            // });
+            // const { sources } = await res.json();
+            // if (sources) {
+            //   dispatch({ type: "appendSourceDocs", payload: sources });
+            // }
+            // dispatch({ type: "done" });
           }
 
           setLoading(false);
@@ -258,37 +230,21 @@ const Page = () => {
 
   useEffect(() => {
     const fetchDocument = async () => {
-      if (document && document.id && cookieValue) {
-        const supabase = supabaseClient(cookieValue.supabaseUrl, cookieValue.supabaseKey);
+      if (document && document.id) {
+        const supabase = supabaseClient();
         const url: any = supabase
           .storage
-          .from(cookieValue.supabaseBucket || 'public')
+          .from(process.env.SUPABASE_BUCKET || 'public')
           .getPublicUrl(document.url)
         setPublicUrl(url.data.publicUrl);
         setDocument(document);
       }
     };
     fetchDocument();
-  }, [document, cookieValue]);
+  }, [document]);
 
   return (
     <section className="container grid grid-cols-2 items-center gap-6 pb-8 pt-6 md:py-10">
-    {!checkCredentials() && <Alert className="col-span-2" variant="warning">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                  <div>
-          This app requires you to{" "}
-          <Link
-            className="cursor-pointer text-blue-500 hover:text-blue-700 hover:underline"
-            href="/credentials"
-            rel="noreferrer"
-          >
-            add your credentials
-          </Link>{" "}
-          to work properly.
-        </div>
-                  </AlertDescription>
-                </Alert>}
       {!document && <div className="min-w-1/5 col-span-2 flex flex-col items-start gap-2 md:col-span-1">
         <h2 className="mt-10 scroll-m-20 pb-2 text-2xl font-semibold tracking-tight transition-colors first:mt-0">
           Upload your PDF
@@ -327,16 +283,7 @@ const Page = () => {
               type="submit"
               disabled={
                 !files ||
-                loading ||
-                !cookieValue.openaiApiKey ||
-                !cookieValue.pineconeEnvironment ||
-                !cookieValue.pineconeIndex ||
-                !cookieValue.pineconeApiKey ||
-                !cookieValue.supabaseUrl ||
-                !cookieValue.supabaseKey ||
-                !cookieValue.supabaseBucket ||
-                !cookieValue.supabaseDatabaseUrl ||
-                !cookieValue.supabaseDirectUrl
+                loading
               }
               className="mt-2"
 
@@ -455,7 +402,7 @@ const Page = () => {
             <div className={styles.cloudform}>
               <form onSubmit={handleSubmit}>
                 <textarea
-                  disabled={loading || !document}
+                  disabled={loading}
                   onKeyDown={handleEnter}
                   ref={textAreaRef}
                   autoFocus={false}
