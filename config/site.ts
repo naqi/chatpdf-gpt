@@ -19,11 +19,11 @@ export const siteConfig = {
     },
     {
       title: "Github",
-      href: "https://github.com/anis-marrouchi/chatpdf-gpt",
+      href: "https://github.com/EmeraldLabs/chatpdf-gpt",
     },
   ],
   links: {
-    twitter: "https://twitter.com/anis_marrouchi",
-    github: "https://github.com/anis-marrouchi/chatpdf-gpt",
+    twitter: "https://twitter.com",
+    github: "https://github.com/EmeraldLabs/chatpdf-gpt",
   },
 }
