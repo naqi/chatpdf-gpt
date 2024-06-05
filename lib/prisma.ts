@@ -1,10 +1,11 @@
 import { PrismaClient } from "@prisma/client"
+import credentials from "@/utils/credentials";
 
-export const createPrisma = ({url}) => {
-    const opts  ={
+export const createPrisma = () => {
+  const opts  ={
     datasources: {
       db: {
-        url,
+        url : credentials.supabaseDatabaseUrl,
       },
     },
   }
