@@ -1,16 +1,16 @@
 import { PineconeClient } from '@pinecone-database/pinecone';
+import credentials from "@/utils/credentials";
 
 if (!process.env.PINECONE_ENVIRONMENT || !process.env.PINECONE_API_KEY) {
   //throw new Error('Pinecone environment or api key vars missing');
 }
 
-export async function initPinecone(environment: string, apiKey: string) {
+export async function initPinecone() {
   try {
     const pinecone = new PineconeClient();
-    console.log(environment, apiKey);
     await pinecone.init({
-      environment, //this is in the dashboard
-      apiKey
+      environment : credentials.pineconeEnvironment, //this is in the dashboard
+      apiKey : credentials.pineconeApiKey
     });
 
     return pinecone;
