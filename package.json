@@ -2,10 +2,6 @@
   "name": "chatpdf-gpt",
   "version": "0.0.1",
   "private": true,
-  "author": {
-    "name": "Anis Marrouchi",
-    "email": "anismarrouchi@hotmail.com"
-  },
   "engines": {
     "node": "18.14.0"
   },

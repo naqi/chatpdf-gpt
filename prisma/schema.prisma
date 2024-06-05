@@ -1,13 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("NEXT_PUBLIC_DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Documents {
@@ -18,11 +16,18 @@ model Documents {
 }
 
 model ChatHistory {
-  id         String   @id @default(cuid())
-  childId    String
-  title      String?
-  messages   Json
-  chatType   String   @default("parenthoodGPT")
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
+id         String   @id @default(cuid())
+childId    String
+title      String?
+messages   Json
+chatType   String   @default("parenthoodGPT")
+created_at DateTime @default(now())
+updated_at DateTime @default(now())
+}
+
+model documents {
+  id        BigInt                 @id @default(autoincrement())
+  content   String?
+  metadata  Json?
+  embedding Unsupported("vector")?
 }
