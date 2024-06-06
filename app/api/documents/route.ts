@@ -2,7 +2,6 @@
 
 import fs from "fs"
 import { NextRequest, NextResponse } from "next/server"
-import { configurationValues, validateCognitoToken } from "@/utils/auth"
 import { initPinecone } from "@/utils/pinecone-client"
 import { createClient } from "@supabase/supabase-js"
 import axios from "axios"
@@ -11,9 +10,7 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai"
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
 import { PineconeStore } from "langchain/vectorstores/pinecone"
 
-import { PINECONE_NAME_SPACE } from "@/config/pinecone"
 import { createPrisma } from "@/lib/prisma"
-import {PINECONE_NAME_SPACE} from "@/config/pinecone";
 import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 
 import credentials from "@/utils/credentials";
