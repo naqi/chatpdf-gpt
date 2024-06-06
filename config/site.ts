@@ -1,9 +1,9 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "PDF Chat",
+  name: "LLM RAG Playground",
   description:
-    "Chat with any pdf file, powered by Langchain, Pinecone, Supabase and OpenAI",
+    "Chat with any pdf file, powered by Langchain, Pinecone, Supabase, OpenAI and Groq",
   mainNav: [
     {
       title: "Home",
@@ -13,17 +13,8 @@ export const siteConfig = {
       title: "Documents",
       href: "/documents",
     },
-    {
-      title: "Credentials",
-      href: "/credentials",
-    },
-    {
-      title: "Github",
-      href: "https://github.com/EmeraldLabs/chatpdf-gpt",
-    },
   ],
   links: {
-    twitter: "https://twitter.com",
     github: "https://github.com/EmeraldLabs/chatpdf-gpt",
   },
 }

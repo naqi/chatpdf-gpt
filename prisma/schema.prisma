@@ -16,13 +16,12 @@ model Documents {
 }
 
 model ChatHistory {
-id         String   @id @default(cuid())
-childId    String
-title      String?
-messages   Json
-chatType   String   @default("parenthoodGPT")
-created_at DateTime @default(now())
-updated_at DateTime @default(now())
+  id         String   @id @default(cuid())
+  childId    String
+  messages   Json
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  title      String?
 }
 
 model documents {
