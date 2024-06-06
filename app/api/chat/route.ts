@@ -11,18 +11,7 @@ import {getSupabaseStore} from "@/lib/langchain/vectorstores/supabase";
 export async function POST(request: NextRequest) {
   console.log("\n\n INCOMING_REQUEST", request, "\n\n")
   const body = await request.json()
-  // Get credentials from ENV
-
-  const { prompt, chatId } = body
-
   //Get history from supabase against child id
-  const prisma = createPrisma()
-  const historyFromDB = await prisma.chatHistory.findFirst({
-    where: {
-      id: chatId,
-    },
-  })
-
   const {
     prompt,
     chatId,
@@ -31,7 +20,7 @@ export async function POST(request: NextRequest) {
     isFirstMessage,
   } = body
   let messageHistory = []
-  const prisma = createPrisma({ url: credentials.supabaseDatabaseUrl })
+  const prisma = createPrisma()
   if (chatId) {
     //Get history from supabase against child id
     const historyFromDB = await prisma.chatHistory.findFirst({
