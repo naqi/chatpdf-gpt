@@ -69,7 +69,6 @@ const { highlight } = searchPluginInstance;
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const cookieValue = configurationValues
 
   const [messageState, setMessageState] = useState<{
     messages: Message[];
