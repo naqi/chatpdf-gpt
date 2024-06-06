@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   const { prompt, chatId } = body
 
   //Get history from supabase against child id
-  const prisma = createPrisma({ url: credentials.supabaseDatabaseUrl })
+  const prisma = createPrisma()
   const historyFromDB = await prisma.chatHistory.findFirst({
     where: {
       id: chatId,
