@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   const { openaiApiKey, pineconeEnvironment, pineconeIndex, pineconeApiKey } =
     credentials
-  const pinecone = await initPinecone(pineconeEnvironment, pineconeApiKey)
+  const pinecone = await initPinecone()
   const { prompt, messages: history, id } = body
 
   // OpenAI recommends replacing newlines with spaces for best results
