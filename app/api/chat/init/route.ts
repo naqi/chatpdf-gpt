@@ -6,7 +6,7 @@ import credentials from "@/utils/credentials";
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { childId, childContext } = body
+  const { childId, childContext, chatTitle, chatType } = body
   const childInitialContextMessage = [
     {
       name: initialChatMessage.name,
