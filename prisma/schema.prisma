@@ -22,6 +22,7 @@ model ChatHistory {
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
   title      String?
+  chatType   String?
 }
 
 model documents {
