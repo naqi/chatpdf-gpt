@@ -6,6 +6,7 @@ import { ModelHandler } from "@/lib/langchain/model"
 import { createPrisma } from "@/lib/prisma"
 import credentials from "@/utils/credentials";
 import {getSupabaseStore} from "@/lib/langchain/vectorstores/supabase";
+import {getPineconeStore} from "@/lib/langchain/vectorstores/pinecone";
 
 // export const runtime = "edge"
 
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   // Get credentials from ENV
 
-  const { prompt, chatId } = body
+  const { prompt, chatId, id: documentId } = body
 
   //Get history from supabase against child id
   const prisma = createPrisma()
@@ -38,14 +39,14 @@ export async function POST(request: NextRequest) {
     const stream = new TransformStream()
     const writer = stream.writable.getWriter()
 
-    // const vectorStore = await getPineconeStore(credentials)
-    const supabaseStore = await getSupabaseStore()
+    const vectorStore = await getPineconeStore(credentials, documentId)
+    // const supabaseStore = await getSupabaseStore()
     const modelHandler = new ModelHandler(writer)
     const model = modelHandler.getModel(credentials.openaiApiKey)
 
     const response = getChain(
       model,
-      supabaseStore,
+      vectorStore,
       sanitizedQuestion,
       messageHistory
     )

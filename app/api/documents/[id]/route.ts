@@ -7,7 +7,72 @@ import { PrismaClient } from "@prisma/client"
 import { createPrisma } from "@/lib/prisma"
 import { supabaseClient } from "@/lib/supabase"
 import credentials from "@/utils/credentials"
+import axios from "axios";
+import fs from "fs";
+import {PDFLoader} from "langchain/document_loaders/fs/pdf";
+import {RecursiveCharacterTextSplitter} from "langchain/text_splitter";
+import {OpenAIEmbeddings} from "langchain/embeddings/openai";
+import {PineconeStore} from "langchain/vectorstores/pinecone";
 
+export async function POST(request: NextRequest, res: NextResponse) {
+  const body = await request.json()
+  const {publicUrl , id} = body
+  const pinecone = await initPinecone()
+
+  const checkStatus = async () => {
+    const {status} = await pinecone.describeIndex({
+      indexName: credentials.pineconeIndex,
+    })
+    if (status?.ready) {
+      return status
+    } else {
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(checkStatus()), 5000)
+      })
+    }
+  }
+
+  await checkStatus()
+  const result = await axios.get(publicUrl, { responseType: "arraybuffer" })
+
+  // Write the PDF to a temporary file. This is necessary because the PDFLoader
+  fs.writeFileSync(`/tmp/${id}.pdf`, result.data)
+  const loader = new PDFLoader(`/tmp/${id}.pdf`)
+
+  const rawDocs = await loader.load()
+  /* Split text into chunks */
+  const textSplitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1536,
+    chunkOverlap: 200,
+  })
+
+  const docs = await textSplitter.splitDocuments(rawDocs)
+
+  console.log(`creating vector store for ${publicUrl}...`)
+  /*create and store the embeddings in the vectorStore*/
+  const embeddings = new OpenAIEmbeddings({
+    openAIApiKey: credentials.openaiApiKey,
+    stripNewLines: true,
+    verbose: true,
+    timeout: 60000,
+    maxConcurrency: 5,
+  })
+
+  const index = pinecone.Index(credentials.pineconeIndex) //change to your own index name
+  // pinecone_name_space is the id of the document
+  //embed the PDF documents
+  try {
+    await PineconeStore.fromDocuments(docs, embeddings, {
+      pineconeIndex: index,
+      namespace: id,
+      textKey: "text",
+    })
+  } catch (err) {
+    console.log(err)
+  }
+
+  return NextResponse.json({ message: "Document embedding created successfully." })
+}
 // @ts-ignore
 export async function GET(request: NextRequest, { params: { id } }) {
 
