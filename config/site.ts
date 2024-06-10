@@ -13,17 +13,5 @@ export const siteConfig = {
       title: "Documents",
       href: "/documents",
     },
-    {
-      title: "Credentials",
-      href: "/credentials",
-    },
-    {
-      title: "Github",
-      href: "https://github.com/EmeraldLabs/chatpdf-gpt",
-    },
   ],
-  links: {
-    twitter: "https://twitter.com",
-    github: "https://github.com/EmeraldLabs/chatpdf-gpt",
-  },
 }
