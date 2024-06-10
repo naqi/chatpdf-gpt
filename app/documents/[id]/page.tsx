@@ -47,8 +47,8 @@ const Page = ({ params }: {
   const searchPluginInstance = searchPlugin();
   const jumpToPagePluginInstance = jumpToPagePlugin();
   const highlightPluginInstance = highlightPlugin();
-    const { jumpToPage } = jumpToPagePluginInstance;
-const { highlight } = searchPluginInstance;
+  const { jumpToPage } = jumpToPagePluginInstance;
+  const { highlight } = searchPluginInstance;
   const [state, dispatch] = useReducer(reducer, {
     messages: [
       {
@@ -144,22 +144,22 @@ const { highlight } = searchPluginInstance;
             const chunkValue = decoder.decode(value);
             dispatch({ type: "updatePromptAnswer", payload: chunkValue });
           }
-          if (done) {
-            // retrieve document sources
-            const res = await fetch('/api/sources', {
-              method: 'POST',
-              body: JSON.stringify({
-                prompt,
-                messages: state.messages,
-                id,
-              }),
-            });
-            const { sources } = await res.json();
-            if (sources) {
-              dispatch({ type: "appendSourceDocs", payload: sources });
-            }
-            dispatch({ type: "done" });
-          }
+          // if (done) {
+          //   // retrieve document sources
+          //   const res = await fetch('/api/sources', {
+          //     method: 'POST',
+          //     body: JSON.stringify({
+          //       prompt,
+          //       messages: state.messages,
+          //       id,
+          //     }),
+          //   });
+          //   const { sources } = await res.json();
+          //   if (sources) {
+          //     dispatch({ type: "appendSourceDocs", payload: sources });
+          //   }
+          //   dispatch({ type: "done" });
+          // }
 
           setLoading(false);
 
@@ -192,7 +192,13 @@ const { highlight } = searchPluginInstance;
               .storage
               .from(process.env.NEXT_PUBLIC_SUPABASE_BUCKET)
               .getPublicUrl(doc.data.url)
-            console.log(url.data.publicUrl)
+            await fetch(`/api/documents/${id}`, {
+              method: 'POST',
+              body: JSON.stringify({
+                publicUrl: url.data.publicUrl,
+                id,
+              }),
+            });
             setPublicUrl(url.data.publicUrl);
             setDocument(doc);
           }

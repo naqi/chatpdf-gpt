@@ -54,8 +54,8 @@ export async function POST(request: Request) {
     timeout: 60000,
     maxConcurrency: 5,
   })
-  await uploadToSupabase(docs, embeddings)
-  // await uploadEmbeddingsToPinecone(docs, embeddings, data)
+  // await uploadToSupabase(docs, embeddings)
+  await uploadEmbeddingsToPinecone(docs, embeddings, data)
   return NextResponse.json({ data })
 }
 
