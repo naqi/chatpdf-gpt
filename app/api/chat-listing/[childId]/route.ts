@@ -5,7 +5,7 @@ import credentials from "@/utils/credentials";
 
 // @ts-ignore
 export async function GET(request: NextRequest, { params: { childId } }) {
-  const prisma = createPrisma({ url: credentials.supabaseDatabaseUrl })
+  const prisma = createPrisma()
 
   const data = await prisma.chatHistory.findMany({
     where: {
