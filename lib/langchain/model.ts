@@ -36,10 +36,10 @@ export class ModelHandler {
   getModel(openaiApiKey) {
     return new ChatOpenAI({
       openAIApiKey: openaiApiKey,
-      modelName: "gpt-4",
-      temperature: 0.3,
-      maxTokens: 1200,
-      streaming: true, 
+      modelName: "gpt-4o",
+      temperature: 0.2,
+      maxTokens: 4096,
+      streaming: true,
       maxRetries: 1,
       callbackManager: CallbackManager.fromHandlers({
         handleLLMNewToken: this.handleLLMNewToken.bind(this),
