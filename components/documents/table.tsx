@@ -43,11 +43,11 @@ import { Document } from "@/lib/supabase";
               <TableCell className="font-medium">{document.id}</TableCell>
               <TableCell>{document.name}</TableCell>
               <TableCell className="text-right">
-                <Link href={`/documents/${document.id}`}>
+                {/* <Link href={`/documents/${document.id}`}>
                     <Button className="mr-2" size="sm" variant={'outline'}>
                         <Eye className="=h-4 w-4" />
                     </Button>
-                </Link>
+                </Link> */}
                     <Button size="sm" variant={'destructive'} onClick={(e) => handleDelete(document.id)}>
                         <Trash className="=h-4 w-4"  />
                     </Button>
